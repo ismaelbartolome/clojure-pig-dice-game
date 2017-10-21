@@ -1,6 +1,7 @@
 (ns pig.core-test
   (:require [clojure.test :refer :all]
-            [pig.core :refer :all]))
+            [pig.core :refer :all]
+            [pig.command-line :refer :all]))
 
 (deftest initial-state-test
   (testing "1 player"

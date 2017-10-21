@@ -1,13 +1,7 @@
-(ns pig.core
-  (:gen-class))
-
-
-(defn serialize-state [state]
-  (format "Round=%d Ptos=%s PLAYER=%d Turn=%s" (state :round) (state :points) (state :player) (state :turn)))
+(ns pig.core)
 
 (defn serialize-log-state [state]
   (format "%s" state))
-
 
 (defn log-state
   [txt state]
@@ -36,7 +30,6 @@
       {:player (mod (inc player)  num-players)
        :round next-round})))
 
-
 (defn accumulate-points
   [{:keys [turn points player] :as state}]
   (let [acc-points
@@ -48,7 +41,6 @@
         state
         {:turn   []
          :points (assoc points player acc-points)})))
-
 
 (defn hold [state]
   ((comp next-player accumulate-points ) state))
@@ -62,18 +54,9 @@
   (do
     (merge state {:turn (conj turn num)})))
 
-
-
-
-
 (defn winner?
   [ {:keys  [points player win-points] :as state}]
   (>= (points player) win-points))
-
-
-
-
-
 
 (defn do-hold
   "Hold decision"
@@ -85,8 +68,6 @@
       acc-state
       (next-player acc-state))))
 
-
-
 (defn do-dice
   "Dice decision"
   [state roller]
@@ -96,7 +77,6 @@
       (= val 1)
       (one state)
       (dice state val))))
-
 
 
 (defn play [state roller get-move]
@@ -111,6 +91,7 @@
              (play state roller get-move)))))
 
 
+; ENTRY FUNCTION
 (defn pig-loop
   "Game main loop"
   [players target roller get-move]
@@ -123,55 +104,3 @@
         (winner? new-state)
         new-state
         (recur new-state)))))
-
-
-;; Function for read values
-(defn get-user-selection
-  [ state]
-  (do
-    (println "")
-    (println
-      (format "%s"
-              (serialize-state state)))
-    (println "PLAYER" (state :player) "(h)old (d)ice > ")
-    (read-line)))
-
-(defn read-option
-  [txt]
-  (do
-    (println txt "?")
-    (read-string (read-line))))
-
-;; Function for dice
-(defn random-dice [ & no-print]
-  (let
-    [ val
-     (->
-       (rand-int 6)
-       inc)]
-    (if (empty? no-print) (println "dice=" val))
-    val))
-
-;; Declare winner
-(defn print-winner
-  [state]
-  (println
-    (format "WINS %s   %s"
-      (state :player)
-      (serialize-log-state state))))
-
-(defn -main
- "Start interactive game"
- [& args]
-
- (println "PIG GAME")
- (let
-   [
-    players (read-option "Number of players")
-    target (read-option "Target points")
-    roller random-dice
-    get-move get-user-selection]
-   (->
-     (pig-loop players target roller get-move)
-     (print-winner))))
-
