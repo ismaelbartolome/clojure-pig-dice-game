@@ -1,4 +1,7 @@
-# pig
+# Pigs Kata Clojure
+
+https://en.m.wikipedia.org/wiki/Pig_(dice_game)
+https://github.com/rojoangel/pigs-kata-clojure
 
 ## Testing
 lein test
